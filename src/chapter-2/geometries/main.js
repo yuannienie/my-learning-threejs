@@ -1,108 +1,81 @@
 import * as THREE from 'three';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
-function addGeometries(scene) {
-    const geoms = [];
-    geoms.push(new THREE.CylinderGeometry(1, 4, 4));
-    // basic cube
-    geoms.push(new THREE.BoxGeometry(2, 2, 2));
-    // basic spherer
-    geoms.push(new THREE.SphereGeometry(2));
-    geoms.push(new THREE.IcosahedronGeometry(4));
-    // custom geometry
-    const customGeometry = new THREE.BufferGeometry();
-    const vertices = new Float32Array([
-        // 前面四个顶点
-        -1, -1, 1,
-        1, -1, 1,
-        1, 1, 1,
-        -1, 1, 1,
-        // 后面四个顶点
-        -1, -1, -1,
-        1, -1, -1,
-        1, 1, -1,
-        -1, 1, -1
-    ]);
+class Controls {
+    constructor(cube) {
+        this.scaleX = 1;
+        this.scaleY = 1;
+        this.scaleZ = 1;
 
-    // 创建顶点索引数组
-    const indices = new Float32Array([
-        // 前面的面
-        0, 1, 2,
-        2, 3, 0,
-        // 后面的面
-        4, 6, 5,
-        6, 4, 7,
-        // 侧面
-        4, 5, 0,
-        5, 1, 0,
-        3, 2, 7,
-        2, 6, 7,
-        5, 6, 1,
-        6, 2, 1,
-        3, 7, 0,
-        7, 4, 0
-    ]);
+        this.positionX = 0;
+        this.positionY = 5;
+        this.positionZ = 0;
 
-    // 创建法线向量数组
-    const normals = new Float32Array([
-        // 前面的面
-        0, 1, 2,
-        2, 3, 0,
-        // 后面的面
-        4, 5, 6,
-        6, 7, 4,
-        // 侧面1
-        4, 0, 3,
-        3, 7, 4,
-        // 侧面2
-        1, 5, 6,
-        6, 2, 1,
-        // 侧面3
-        4, 5, 1,
-        1, 0, 4,
-        // 侧面4
-        3, 2, 6,
-        6, 7, 3
-    ]);
-    // 设置顶点坐标属性
-    const positionAttribute = new THREE.BufferAttribute(vertices, 3);
-    customGeometry.setAttribute('position', positionAttribute);
-    // 设置顶点索引属性
-    const indexAttribute = new THREE.BufferAttribute(indices, 1);
-    customGeometry.setIndex(indexAttribute);
-    // 设置法线向量属性
-    const normalAttribute = new THREE.BufferAttribute(normals, 3);
-    customGeometry.setAttribute('normal', normalAttribute);
-    geoms.push(customGeometry);
-    let j = 0;
-    for (let i = 0; i < geoms.length; i++) {
-        const materials = [
-            new THREE.MeshBasicMaterial({ color: Math.random() * 0xFFFFFF, wireframe: true }),
-            new THREE.MeshLambertMaterial({ opacity: 0.6, color: 0x44ff44, transparent: true })
-        ];
+        this.rotationX = 0;
+        this.rotationY = 0;
+        this.rotationZ = 0;
+        this.scale = 1;
 
-        const mesh = new THREE.Mesh(geoms[i], materials[i % 2]);
-        mesh.castShadow = true;
-        mesh.position.x = -24 + ((i % 4) * 12);
-        mesh.position.y = 4;
-        mesh.position.z = -4 + (j * 12);
-        if ((i + 1) % 4 == 0) j++;
-        scene.add(mesh);
+        this.translateX = 0;
+        this.translateY = 0;
+        this.translateZ = 0;
+
+        this.visible = true;
+
+        this.target = cube;
+    };
+
+    reset() {
+        this.scaleX = 1;
+        this.scaleY = 1;
+        this.scaleZ = 1;
+
+        this.positionX = 0;
+        this.positionY = 5;
+        this.positionZ = 0;
+
+        this.rotationX = 0;
+        this.rotationY = 0;
+        this.rotationZ = 0;
+        this.scale = 1;
+
+        this.translateX = 0;
+        this.translateY = 0;
+        this.translateZ = 0;
+
+        this.target.position.x = this.positionX;
+        this.target.position.y = this.positionY;
+        this.target.position.z = this.positionZ;
+        this.target.scale.set(this.scaleX, this.scaleY, this.scaleZ);
+        this.target.rotation.set(this.rotationX, this.rotationY, this.rotationZ);
+
+        this.visible = true;
     }
-}
+
+    translate() {
+        cube.translateX(this.translateX);
+        cube.translateY(this.translateY);
+        cube.translateZ(this.translateZ);
+
+        this.positionX = cube.position.x;
+        this.positionY = cube.position.y;
+        this.positionZ = cube.position.z;
+    }
+};
 
 const width = window.innerWidth;
 const height = window.innerHeight;
 const w2hRatio = width / height;
 const container = document.querySelector('#webgl-container');
 
-let plane;
+let plane, cube;
 
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(45, w2hRatio, 0.1, 1000);
-camera.position.set(-50, 20, 10);
+camera.position.set(-30, 40, 40);
 camera.lookAt(scene.position);
 
 const renderer = new THREE.WebGLRenderer();
@@ -133,7 +106,16 @@ spotLight.castShadow = true;
 scene.add(spotLight);
 
 scene.add(plane);
-addGeometries(scene);
+
+// add cube
+const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x44ff44 });
+cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+cube.position.y = 5;
+cube.castShadow = true;
+scene.add(cube)
+
+const controls = new Controls(cube);
 
 // initial statistics and GUI module
 const stats = new Stats();
@@ -147,6 +129,41 @@ trackBallControls.enablePan = false;
 
 const clock = new THREE.Clock();
 
+// add gui
+const gui = new GUI();
+const guiScale = gui.addFolder('scale');
+guiScale.add(controls, 'scaleX', 0, 5).listen();
+guiScale.add(controls, 'scaleY', 0, 5).listen();
+guiScale.add(controls, 'scaleZ', 0, 5).listen();
+
+const guiPosition = gui.addFolder('position');
+const contX = guiPosition.add(controls, 'positionX', -10, 10).listen();
+const contY = guiPosition.add(controls, 'positionY', -4, 20).listen();
+const contZ = guiPosition.add(controls, 'positionZ', -10, 10).listen();
+contX.onChange(function (value) {
+    cube.position.x = controls.positionX;
+});
+contY.onChange(function (value) {
+    cube.position.y = controls.positionY;
+});
+contZ.onChange(function (value) {
+    cube.position.z = controls.positionZ;
+});
+
+const guiRotation = gui.addFolder('rotation');
+guiRotation.add(controls, 'rotationX', -4, 4).listen();
+guiRotation.add(controls, 'rotationY', -4, 4).listen();
+guiRotation.add(controls, 'rotationZ', -4, 4).listen();
+
+const guiTranslate = gui.addFolder('translate');
+guiTranslate.add(controls, 'translateX', -10, 10).listen();
+guiTranslate.add(controls, 'translateY', -10, 10).listen();
+guiTranslate.add(controls, 'translateZ', -10, 10).listen();
+guiTranslate.add(controls, 'translate');
+
+gui.add(controls, 'visible');
+gui.add(controls, 'reset');
+
 function render() {
     renderer.render(scene, camera);
 }
@@ -154,6 +171,14 @@ function render() {
 function animate() {
     stats.update();
     trackBallControls.update(clock.getDelta());
+
+    cube.visible = controls.visible;
+
+    cube.rotation.x = controls.rotationX;
+    cube.rotation.y = controls.rotationY;
+    cube.rotation.z = controls.rotationZ;
+
+    cube.scale.set(controls.scaleX, controls.scaleY, controls.scaleZ);
     requestAnimationFrame(animate);
     render();
 }
