@@ -50,6 +50,8 @@ const container = document.querySelector('#webgl-container');
 let plane;
 
 const scene = new THREE.Scene();
+// add fog
+scene.fog = new THREE.Fog(0xFEFEFE, -10, 100);
 
 const camera = new THREE.PerspectiveCamera(45, w2hRatio, 0.1, 1000);
 camera.position.set(-30, 40, 30);
