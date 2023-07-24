@@ -9,7 +9,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         chapter1: resolve(__dirname, 'chapter-1/index.html'),
-        chapter2: resolve(__dirname, 'chapter-2/index.html')
+        chapter2: resolve(__dirname, 'chapter-2/index.html'),
+        chapter3: resolve(__dirname, 'chapter-3/index.html')
       },
     },
   },
