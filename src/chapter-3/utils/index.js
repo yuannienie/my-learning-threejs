@@ -12,7 +12,7 @@ function createBoundingWall(scene) {
   const wallRight = new THREE.BoxGeometry(70, 2, 2);
   const wallTop = new THREE.BoxGeometry(2, 2, 50);
   const wallBottom = new THREE.BoxGeometry(2, 2, 50);
-  
+
   const wallMaterial = new THREE.MeshPhongMaterial({ color: 0xa0552d });
 
   const wallLeftMesh = new THREE.Mesh(wallLeft, wallMaterial);
@@ -31,7 +31,7 @@ function createBoundingWall(scene) {
   scene.add(wallBottomMesh);
 }
 
-function createGroundPlane(scene) {
+export function createGroundPlane(scene) {
   const planeGeometry = new THREE.PlaneGeometry(70, 50);
   const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x9acd32 });
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -41,7 +41,10 @@ function createGroundPlane(scene) {
   plane.position.y = 0;
   plane.position.z = 0;
 
+  plane.receiveShadow = true;
+
   scene.add(plane);
+  return plane;
 }
 
 function createHouse(scene) {
@@ -114,4 +117,35 @@ export function initCamera(initialPosition) {
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   return camera;
+}
+
+export function addDefaultCubeAndSphere(scene) {
+  // create a cube
+  const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+  const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+  const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  cube.castShadow = true;
+
+  // position the cube
+  cube.position.x = -4;
+  cube.position.y = 3;
+  cube.position.z = 0;
+
+  // add the cube to the scene
+  scene.add(cube);
+
+  const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+  const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0x7777ff });
+  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+  // position the sphere
+  sphere.position.x = 20;
+  sphere.position.y = 0;
+  sphere.position.z = 2;
+  sphere.castShadow = true;
+
+  // add the sphere to the scene
+  scene.add(sphere);
+
+  return { cube, sphere };
 }
