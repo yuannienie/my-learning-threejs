@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 export const container = document.getElementById("webgl-container");
 
@@ -52,8 +52,14 @@ function createHouse(scene) {
   const base = new THREE.CylinderGeometry(5, 5, 6); // 圆柱体
 
   // create the mesh
-  const roofMesh = new THREE.Mesh(roof, new THREE.MeshPhongMaterial({ color: 0x8b7213 }));
-  const baseMesh = new THREE.Mesh(base, new THREE.MeshPhongMaterial({ color: 0xffe4c4 }));
+  const roofMesh = new THREE.Mesh(
+    roof,
+    new THREE.MeshPhongMaterial({ color: 0x8b7213 })
+  );
+  const baseMesh = new THREE.Mesh(
+    base,
+    new THREE.MeshPhongMaterial({ color: 0xffe4c4 })
+  );
 
   roofMesh.position.set(25, 8, 0);
   baseMesh.position.set(25, 3, 0);
@@ -72,8 +78,14 @@ function createTree(scene) {
   const leaves = new THREE.SphereGeometry(4);
 
   // create the mesh
-  const trunkMesh = new THREE.Mesh(trunk, new THREE.MeshPhongMaterial({ color: 0x8b4513 }));
-  const leavesMesh = new THREE.Mesh(leaves, new THREE.MeshPhongMaterial({ color: 0x00ff00 }));
+  const trunkMesh = new THREE.Mesh(
+    trunk,
+    new THREE.MeshPhongMaterial({ color: 0x8b4513 })
+  );
+  const leavesMesh = new THREE.Mesh(
+    leaves,
+    new THREE.MeshPhongMaterial({ color: 0x00ff00 })
+  );
 
   // position the trunk. Set y to half of height of trunk
   trunkMesh.position.set(-10, 4, 0);
@@ -96,7 +108,8 @@ export function addHouseAndTree(scene) {
 }
 
 export function initRenderer(properties) {
-  const props = (typeof properties !== 'undefined' && properties) ? properties : {};
+  const props =
+    typeof properties !== "undefined" && properties ? properties : {};
   const renderer = new THREE.WebGLRenderer(props);
   renderer.shadowMap.enabled = true;
   renderer.shadowMapSoft = true;
@@ -110,11 +123,22 @@ export function initRenderer(properties) {
   return renderer;
 }
 
-export function initCamera(initialPosition) {
-  const position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(-30, 40, 30);
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+export function initCamera(
+  initialPosition,
+  lookAtPosition = new THREE.Vector3(0, 0, 0)
+) {
+  const position =
+    initialPosition !== undefined
+      ? initialPosition
+      : new THREE.Vector3(-30, 40, 30);
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
   camera.position.copy(position);
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  camera.lookAt(lookAtPosition);
 
   return camera;
 }
