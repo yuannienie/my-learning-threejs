@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { initRenderer, initCamera, container, addAxesHelper } from "../utils";
+import { initRenderer, initCamera, container, addAxesHelper } from "../../utils";
 import grassLightBig from "../../../assets/textures/ground/grasslight-big.jpg";
 import lensflare0 from "../../../assets/textures/flares/lensflare0.png";
 import lensflare3 from "../../../assets/textures/flares/lensflare3.png";
