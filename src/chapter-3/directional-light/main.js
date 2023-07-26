@@ -59,6 +59,8 @@ directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
 scene.add(directionalLight);
 
+const shadowCamera = new THREE.CameraHelper(directionalLight.shadow.camera)
+
 // create a cube
 const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
 const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff3333 });
