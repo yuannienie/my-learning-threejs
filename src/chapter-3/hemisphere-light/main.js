@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { initRenderer, initCamera, container, addAxesHelper } from '../utils';
+import grassLight from '@assets/textures/ground/grasslight-big.jpg';
 
 class Controls {
     constructor() {
@@ -26,9 +27,7 @@ renderer = initRenderer();
 addAxesHelper(scene);
 
 // create the texture for plane
-const textureGrass = new THREE
-    .TextureLoader()
-    .load('@assets/textures/ground/grasslight-big.jpg');
+const textureGrass = new THREE.TextureLoader().load(grassLight);
 textureGrass.wrapS = THREE.RepeatWrapping;
 textureGrass.wrapT = THREE.RepeatWrapping;
 textureGrass.repeat.set(10, 10);

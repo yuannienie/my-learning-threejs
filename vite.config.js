@@ -7,7 +7,7 @@ export default defineConfig({
   base: './',
   resolve: {
     alias: {
-      '@assets': resolve(__dirname, '/assets'),
+      '@assets': resolve(__dirname, './assets'),
     }
   },
   build: {
