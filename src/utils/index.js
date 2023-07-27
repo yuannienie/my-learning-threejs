@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 
 export const container = document.getElementById("webgl-container");
 
@@ -124,20 +124,16 @@ export function initRenderer(properties) {
   return renderer;
 }
 
-export function initCamera(
+export function initPerspectiveCamera(
   initialPosition,
-  lookAtPosition = new THREE.Vector3(0, 0, 0)
+  lookAtPosition = new THREE.Vector3(0, 0, 0),
+  { fov = 45, near = 0.1, far = 1000 } = {}
 ) {
   const position =
     initialPosition !== undefined
       ? initialPosition
       : new THREE.Vector3(-30, 40, 30);
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
+  const camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
   camera.position.copy(position);
   camera.lookAt(lookAtPosition);
 
@@ -179,7 +175,7 @@ export function loadGopher(material) {
   const loader = new OBJLoader();
   let mesh = null;
   const p = new Promise((resolve) => {
-    loader.load('../../assets/models/gopher/gopher.obj', (loadedMesh) => {
+    loader.load("../../assets/models/gopher/gopher.obj", (loadedMesh) => {
       // this is a group of meshes, so iterate until we reach a THREE.Mesh
       mesh = loadedMesh;
       if (material) {
@@ -196,7 +192,7 @@ export function loadGopher(material) {
 
 /**
  * Add a folder to the gui containing the basic material properties.
- * 
+ *
  * @param gui the gui to add to
  * @param controls the current controls object
  * @param material the material to control
@@ -204,30 +200,41 @@ export function loadGopher(material) {
  * @param name optionally the name to assign to the folder
  */
 export function addBasicMaterialSettings(gui, controls, material, name) {
-
-  var folderName = (name !== undefined) ? name : 'THREE.Material';
+  var folderName = name !== undefined ? name : "THREE.Material";
 
   controls.material = material;
 
   var folder = gui.addFolder(folderName);
-  folder.add(controls.material, 'id');
-  folder.add(controls.material, 'uuid');
-  folder.add(controls.material, 'name');
-  folder.add(controls.material, 'opacity', 0, 1, 0.01);
-  folder.add(controls.material, 'transparent');
-  folder.add(controls.material, 'visible');
-  folder.add(controls.material, 'side', { FrontSide: 0, BackSide: 1, BothSides: 2 }).onChange(function (side) {
-    controls.material.side = parseInt(side)
-  });
+  folder.add(controls.material, "id");
+  folder.add(controls.material, "uuid");
+  folder.add(controls.material, "name");
+  folder.add(controls.material, "opacity", 0, 1, 0.01);
+  folder.add(controls.material, "transparent");
+  folder.add(controls.material, "visible");
+  folder
+    .add(controls.material, "side", { FrontSide: 0, BackSide: 1, BothSides: 2 })
+    .onChange(function (side) {
+      controls.material.side = parseInt(side);
+    });
 
-  folder.add(controls.material, 'colorWrite');
-  folder.add(controls.material, 'premultipliedAlpha');
-  folder.add(controls.material, 'dithering');
-  folder.add(controls.material, 'shadowSide', { FrontSide: 0, BackSide: 1, BothSides: 2 });
-  folder.add(controls.material, 'vertexColors', { NoColors: THREE.NoColors, FaceColors: THREE.FaceColors, VertexColors: THREE.VertexColors }).onChange(function (vertexColors) {
-    material.vertexColors = parseInt(vertexColors);
+  folder.add(controls.material, "colorWrite");
+  folder.add(controls.material, "premultipliedAlpha");
+  folder.add(controls.material, "dithering");
+  folder.add(controls.material, "shadowSide", {
+    FrontSide: 0,
+    BackSide: 1,
+    BothSides: 2,
   });
-  folder.add(controls.material, 'fog');
+  folder
+    .add(controls.material, "vertexColors", {
+      NoColors: THREE.NoColors,
+      FaceColors: THREE.FaceColors,
+      VertexColors: THREE.VertexColors,
+    })
+    .onChange(function (vertexColors) {
+      material.vertexColors = parseInt(vertexColors);
+    });
+  // folder.add(controls.material, "fog");
 
   return folder;
 }
@@ -235,34 +242,47 @@ export function addBasicMaterialSettings(gui, controls, material, name) {
 export function addSpecificMaterialSettings(gui, controls, material, name) {
   controls.material = material;
 
-  var folderName = (name !== undefined) ? name : 'THREE.' + material.type;
+  var folderName = name !== undefined ? name : "THREE." + material.type;
   var folder = gui.addFolder(folderName);
   switch (material.type) {
     case "MeshNormalMaterial":
-      folder.add(controls.material, 'wireframe');
+      folder.add(controls.material, "wireframe");
       return folder;
 
     case "MeshPhongMaterial":
       controls.specular = material.specular.getStyle();
-      folder.addColor(controls, 'specular').onChange(function (e) {
-        material.specular.setStyle(e)
+      folder.addColor(controls, "specular").onChange(function (e) {
+        material.specular.setStyle(e);
       });
-      folder.add(material, 'shininess', 0, 100, 0.01);
+      folder.add(material, "shininess", 0, 100, 0.01);
       return folder;
 
     case "MeshStandardMaterial":
       controls.color = material.color.getStyle();
-      folder.addColor(controls, 'color').onChange(function (e) {
-        material.color.setStyle(e)
+      folder.addColor(controls, "color").onChange(function (e) {
+        material.color.setStyle(e);
       });
       controls.emissive = material.emissive.getStyle();
-      folder.addColor(controls, 'emissive').onChange(function (e) {
-        material.emissive.setStyle(e)
+      folder.addColor(controls, "emissive").onChange(function (e) {
+        material.emissive.setStyle(e);
       });
-      folder.add(material, 'metalness', 0, 1, 0.01);
-      folder.add(material, 'roughness', 0, 1, 0.01);
-      folder.add(material, 'wireframe');
+      folder.add(material, "metalness", 0, 1, 0.01);
+      folder.add(material, "roughness", 0, 1, 0.01);
+      folder.add(material, "wireframe");
 
       return folder;
+  }
+}
+
+export function addArrowHelper(mesh, arrowLength = 2, arrowColor = 0x3333FF) {
+  const { geometry } = mesh;
+  const positionAttribute = geometry.getAttribute('position');
+  const normalAttribute = geometry.getAttribute('normal');
+
+  for (let i = 0; i < positionAttribute.count; i++) {
+    const position = new THREE.Vector3().fromBufferAttribute(positionAttribute, i);
+    const normal = new THREE.Vector3().fromBufferAttribute(normalAttribute, i);
+    const arrow = new THREE.ArrowHelper(normal, position, arrowLength, arrowColor);
+    mesh.add(arrow);
   }
 }

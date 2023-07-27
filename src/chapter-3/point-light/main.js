@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { initRenderer, initCamera, addHouseAndTree, container, addAxesHelper } from '../../utils';
+import { initRenderer, initPerspectiveCamera, addHouseAndTree, container, addAxesHelper } from '../../utils';
 
 class Controls {
     constructor(ambientLight) {
@@ -19,7 +19,7 @@ let trackBallControls, camera, renderer;
 
 const scene = new THREE.Scene();
 
-camera = initCamera();
+camera = initPerspectiveCamera();
 
 renderer = initRenderer();
 

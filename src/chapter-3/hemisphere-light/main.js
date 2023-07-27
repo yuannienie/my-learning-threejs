@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { initRenderer, initCamera, container, addAxesHelper } from '../../utils';
+import { initRenderer, initPerspectiveCamera, container, addAxesHelper } from '../../utils';
 import grassLight from '@assets/textures/ground/grasslight-big.jpg';
 
 class Controls {
@@ -20,7 +20,7 @@ let trackBallControls, camera, renderer, plane, cube, sphere;
 
 const scene = new THREE.Scene();
 
-camera = initCamera();
+camera = initPerspectiveCamera();
 
 renderer = initRenderer();
 
