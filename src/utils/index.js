@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+// @FIXME: How to import obj file in vite project
+// import gopherObj from '@assets/models/gopher/gopher.obj'
 
 export const container = document.getElementById("webgl-container");
 
@@ -175,7 +177,7 @@ export function loadGopher(material) {
   const loader = new OBJLoader();
   let mesh = null;
   const p = new Promise((resolve) => {
-    loader.load("../../assets/models/gopher/gopher.obj", (loadedMesh) => {
+    loader.load(gopherObj, (loadedMesh) => {
       // this is a group of meshes, so iterate until we reach a THREE.Mesh
       mesh = loadedMesh;
       if (material) {
@@ -209,32 +211,32 @@ export function addBasicMaterialSettings(gui, controls, material, name) {
   folder.add(controls.material, "uuid");
   folder.add(controls.material, "name");
   folder.add(controls.material, "opacity", 0, 1, 0.01);
+  // Defines whether this material is transparent. This has an effect on rendering as transparent objects need special treatment and are rendered after non-transparent objects.
   folder.add(controls.material, "transparent");
   folder.add(controls.material, "visible");
   folder
     .add(controls.material, "side", { FrontSide: 0, BackSide: 1, BothSides: 2 })
-    .onChange(function (side) {
+    .onChange(side => {
       controls.material.side = parseInt(side);
     });
-
+  // Whether to render the material's color. This can be used in conjunction with a mesh's renderOrder property to create invisible objects that occlude other objects. Default is true. 
   folder.add(controls.material, "colorWrite");
   folder.add(controls.material, "premultipliedAlpha");
+  // Whether to apply dithering to the color to remove the appearance of banding. Default is false.
   folder.add(controls.material, "dithering");
   folder.add(controls.material, "shadowSide", {
     FrontSide: 0,
     BackSide: 1,
     BothSides: 2,
   });
+  // Defines whether vertex coloring is used. 
+  // Default is false. The engine supports RGB and RGBA vertex colors depending on whether a three (RGB) or four (RGBA) component color buffer attribute is used.
   folder
-    .add(controls.material, "vertexColors", {
-      NoColors: THREE.NoColors,
-      FaceColors: THREE.FaceColors,
-      VertexColors: THREE.VertexColors,
-    })
-    .onChange(function (vertexColors) {
-      material.vertexColors = parseInt(vertexColors);
+    .add(controls.material, "vertexColors")
+    .onChange(vertexColors => {
+      material.vertexColors = vertexColors;
     });
-  // folder.add(controls.material, "fog");
+  folder.add(controls.material, "fog");
 
   return folder;
 }
@@ -282,7 +284,32 @@ export function addArrowHelper(mesh, arrowLength = 2, arrowColor = 0x3333FF) {
   for (let i = 0; i < positionAttribute.count; i++) {
     const position = new THREE.Vector3().fromBufferAttribute(positionAttribute, i);
     const normal = new THREE.Vector3().fromBufferAttribute(normalAttribute, i);
-    const arrow = new THREE.ArrowHelper(normal, position, arrowLength, arrowColor);
+    const arrow = new THREE.ArrowHelper(normal, position, arrowLength, arrowColor, 0.5, 0.5);
     mesh.add(arrow);
+  }
+}
+
+function setMaterialGroup(material, group) {
+  if (group instanceof THREE.Mesh) {
+    group.material = material;
+  } else if (group instanceof THREE.Group) {
+    group.children.forEach(function (child) { setMaterialGroup(material, child) });
+  }
+}
+
+function computeNormalsGroup(group) {
+  if (group instanceof THREE.Mesh) {
+    const tempGeom = new THREE.Geometry();
+    tempGeom.fromBufferGeometry(group.geometry)
+    tempGeom.computeFaceNormals();
+    tempGeom.mergeVertices();
+    tempGeom.computeVertexNormals();
+
+    tempGeom.normalsNeedUpdate = true;
+
+    group.geometry = tempGeom;
+
+  } else if (group instanceof THREE.Group) {
+    group.children.forEach(function (child) { computeNormalsGroup(child) });
   }
 }

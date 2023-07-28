@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { initRenderer, initPerspectiveCamera, container, addBasicMaterialSettings, addAxesHelper, addArrowHelper } from "../../utils";
+import { initRenderer, initPerspectiveCamera, container, addBasicMaterialSettings, addAxesHelper, addArrowHelper, loadGopher } from "../../utils";
 // import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 class Controls {
@@ -70,6 +70,8 @@ function addControls() {
   const gui = new GUI();
   const controls = new Controls();
   addBasicMaterialSettings(gui, controls, meshMaterial);
+  // loadGopher(meshMaterial).then(gopher => {
+  // })
   gui.add(controls, 'selectedMesh', ["cube", "sphere", "plane"]).onChange(function (e) {
     scene.remove(plane);
     scene.remove(cube);

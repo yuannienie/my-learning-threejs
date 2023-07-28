@@ -19,9 +19,9 @@ class Controls {
     const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
     const cubeMaterial = new THREE.MeshDepthMaterial();
     const colorMaterial = new THREE.MeshBasicMaterial({
-      color: controls.color,
+      color: this.color,
       transparent: true,
-      blending: THREE.MultiplyBlending, // doesn't have effect?
+      blending: THREE.MultiplyBlending,
     });
     const cube = createMultiMaterialObject(cubeGeometry, [colorMaterial, cubeMaterial]);
     // creating a depth gradient effect at the edges of the cube
@@ -53,8 +53,9 @@ let trackBallControls, camera, renderer;
 const scene = new THREE.Scene();
 
 // A material for drawing geometry by depth. Depth is based off of the camera near and far plane. White is nearest, black is farthest.
-const depthMaterial = new THREE.MeshDepthMaterial();
-scene.overrideMaterial = depthMaterial;
+// const depthMaterial = new THREE.MeshDepthMaterial();
+// override will disable other material settings
+// scene.overrideMaterial = depthMaterial;
 
 const cameraPosition = new THREE.Vector3(-50, 40, 50);
 camera = initPerspectiveCamera(cameraPosition, scene.position, { near: 50, far: 110 });
