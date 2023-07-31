@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
-// @FIXME: How to import obj file in vite project
-// import gopherObj from '@assets/models/gopher/gopher.obj'
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+// add `?url` as a resource url to import obj file
+import gopherObj from '@assets/models/gopher/gopher.obj?url'
+import floorWood from '@assets/textures/general/floor-wood.jpg'
 
 export const container = document.getElementById("webgl-container");
 
@@ -299,17 +300,94 @@ function setMaterialGroup(material, group) {
 
 function computeNormalsGroup(group) {
   if (group instanceof THREE.Mesh) {
-    const tempGeom = new THREE.Geometry();
-    tempGeom.fromBufferGeometry(group.geometry)
-    tempGeom.computeFaceNormals();
-    tempGeom.mergeVertices();
-    tempGeom.computeVertexNormals();
+    const { geometry } = group;
 
-    tempGeom.normalsNeedUpdate = true;
+    // geometry.computeFaceNormals();
+    // geometry.mergeVertices();
+    geometry.computeVertexNormals();
 
-    group.geometry = tempGeom;
+    geometry.normalsNeedUpdate = true;
+
 
   } else if (group instanceof THREE.Group) {
     group.children.forEach(function (child) { computeNormalsGroup(child) });
   }
+}
+
+export function addLargeGroundPlane(scene, useTexture) {
+  const withTexture = !!useTexture ? useTexture : false;
+  const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+  const planeMaterial = new THREE.MeshPhongMaterial({
+    color: 0xffffff,
+  });
+
+  if (withTexture) {
+    planeMaterial.map = new THREE.TextureLoader().load(floorWood);
+    planeMaterial.map.wrapS = THREE.RepeatWrapping;
+    planeMaterial.map.wrapT = THREE.RepeatWrapping;
+    planeMaterial.map.repeat.set(80, 80);
+  }
+
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.receiveShadow = true;
+
+  plane.rotation.x = -0.5 * Math.PI;
+  plane.position.set(0, 0, 0);
+  scene.add(plane);
+
+  return plane;
+}
+
+export function addMeshSelection(gui, controls, material, scene) {
+  var sphereGeometry = new THREE.SphereGeometry(10, 20, 20);
+  var cubeGeometry = new THREE.BoxGeometry(16, 16, 15);
+  var planeGeometry = new THREE.PlaneGeometry(14, 14, 4, 4);
+
+  var sphere = new THREE.Mesh(sphereGeometry, material);
+  var cube = new THREE.Mesh(cubeGeometry, material);
+  var plane = new THREE.Mesh(planeGeometry, material);
+
+  sphere.position.x = 0;
+  sphere.position.y = 11;
+  sphere.position.z = 2;
+
+  cube.position.y = 8;
+
+  controls.selectedMesh = "cube";
+  loadGopher(material).then(function (gopher) {
+
+    gopher.scale.x = 5;
+    gopher.scale.y = 5;
+    gopher.scale.z = 5;
+    gopher.position.z = 0
+    gopher.position.x = -10
+    gopher.position.y = 0
+
+    gui.add(controls, 'selectedMesh', ["cube", "sphere", "plane", "gopher"]).onChange(function (e) {
+
+      scene.remove(controls.selected);
+
+      switch (e) {
+        case "cube":
+          scene.add(cube);
+          controls.selected = cube;
+          break;
+        case "sphere":
+          scene.add(sphere);
+          controls.selected = sphere;
+          break;
+        case "plane":
+          scene.add(plane);
+          controls.selected = plane;
+          break;
+        case "gopher":
+          scene.add(gopher);
+          controls.selected = gopher;
+          break;
+      }
+    });
+  });
+
+  controls.selected = cube;
+  scene.add(controls.selected);
 }
