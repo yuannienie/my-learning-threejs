@@ -1,3 +1,9 @@
+/**
+ * Physically based rendering (PBR) has recently become the standard in many 3D applications, such as Unity, Unreal and 3D Studio Max.
+ * This approach differs from older approaches in that instead of using approximations for the way in which light interacts with a surface, 
+ * a physically correct model is used. The idea is that, instead of tweaking materials to look good under specific lighting, a material can be created that will react 'correctly' under all lighting scenarios.
+ * MeshStandardMaterial uses per-fragment shading.
+ */
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
@@ -16,7 +22,6 @@ class Controls {
     constructor() {
         this.color = material.color.getStyle();
         this.emissive = material.emissive.getStyle();
-        this.specular = material.specular.getStyle();
     }
 }
 
@@ -41,7 +46,7 @@ spotLight.castShadow = true;
 spotLight.intensity = 0.6;
 scene.add(spotLight);
 
-const material = new THREE.MeshPhongMaterial({
+const material = new THREE.MeshStandardMaterial({
     color: 0x7777ff,
 });
 
@@ -53,21 +58,15 @@ const controls = new Controls();
 
 addBasicMaterialSettings(gui, controls, material);
 addMeshSelection(gui, controls, material, scene);
-const spGui = gui.addFolder("THREE.MeshPhongMaterial");
+const spGui = gui.addFolder("THREE.MeshStandardMaterial");
 spGui.addColor(controls, 'color').onChange(function (e) {
     material.color.setStyle(e)
 });
 spGui.addColor(controls, 'emissive').onChange(function (e) {
     material.emissive = new THREE.Color(e);
 });
-spGui.addColor(controls, 'specular').onChange(function (e) {
-    material.specular = new THREE.Color(e);
-});
-spGui.add(material, 'shininess', 0, 100,)
 spGui.add(material, 'wireframe');
 spGui.add(material, 'wireframeLinewidth', 0, 20);
-
-camera.lookAt(controls.selected.position);
 
 const clock = new THREE.Clock();
 trackBallControls = new OrbitControls(camera, renderer.domElement);
@@ -92,5 +91,7 @@ window.addEventListener(
     },
     false
 );
+
+camera.lookAt(controls.selected.position);
 
 animate();
