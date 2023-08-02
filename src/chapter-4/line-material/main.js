@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
-import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import {
   initRenderer,
   initPerspectiveCamera,
@@ -18,7 +17,7 @@ camera = initPerspectiveCamera();
 
 renderer = initRenderer();
 
-addAxesHelper(scene);
+// addAxesHelper(scene);
 
 // add subtle ambient lighting
 const ambientLight = new THREE.AmbientLight(0x0c0c0c);
@@ -31,19 +30,19 @@ spotLight.castShadow = true;
 scene.add(spotLight);
 
 const points = gosper(4, 60);
-const lines = new THREE.BufferGeometry();
 const colors = [];
 const vertices = [];
 points.forEach((e) => {
-  vertices.push(e.x, e.z, e.y);
+  vertices.push(new THREE.Vector3(e.x, e.z, e.y));
   colors.push(e.x / 100 + 0.5, (e.y * 20) / 300, 0.8); 
 });
-lines.setAttribute('positions', new THREE.Float32BufferAttribute(vertices, 3));
-lines.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
+const lines = new THREE.BufferGeometry();
+lines.setFromPoints(vertices);
+lines.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3)); // has no effect
 const material = new THREE.LineBasicMaterial({
   opacity: 1.0,
-  linewidth: 1,
+  linewidth: 1
 });
 
 const line = new THREE.Line(lines, material);
