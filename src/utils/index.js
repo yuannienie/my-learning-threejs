@@ -237,7 +237,7 @@ export function addBasicMaterialSettings(gui, controls, material, name) {
     .onChange(vertexColors => {
       material.vertexColors = vertexColors;
     });
-  folder.add(controls.material, "fog");
+  // folder.add(controls.material, "fog");
 
   return folder;
 }
@@ -390,4 +390,75 @@ export function addMeshSelection(gui, controls, material, scene) {
 
   controls.selected = cube;
   scene.add(controls.selected);
+}
+
+export function initDefaultLight(scene, initialPosition = new THREE.Vector3(-10, 30, 40)) {
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.copy(initialPosition);
+  spotLight.shadow.mapSize.width = 2048;
+  spotLight.shadow.mapSize.height = 2048;
+  spotLight.shadow.camera.fov = 15;
+  spotLight.castShadow = true;
+  spotLight.decay = 2;
+  spotLight.penumbra = 0.05;
+  spotLight.name = "spotLight"
+
+  scene.add(spotLight);
+
+  const ambientLight = new THREE.AmbientLight(0x343434);
+  ambientLight.name = "ambientLight";
+  scene.add(ambientLight);
+}
+
+export const applyMeshNormalMaterial = (geometry, material) => {
+  if (!material || material.type !== "MeshNormalMaterial") {
+    material = new THREE.MeshNormalMaterial();
+    material.side = THREE.DoubleSide;
+  }
+
+  return new THREE.Mesh(geometry, material)
+}
+
+export const applyMeshStandardMaterial = (geometry, material) => {
+  if (!material || material.type !== "MeshStandardMaterial") {
+    var material = new THREE.MeshStandardMaterial({ color: 0xff0000 })
+    material.side = THREE.DoubleSide;
+  }
+
+  return new THREE.Mesh(geometry, material)
+}
+
+export function redrawGeometryAndUpdateUI(gui, scene, controls, geomFunction) {
+  guiRemoveFolder(gui, controls.specificMaterialFolder);
+  guiRemoveFolder(gui, controls.currentMaterialFolder);
+  if (controls.mesh) scene.remove(controls.mesh)
+  var changeMat = eval("(" + controls.appliedMaterial + ")")
+  if (controls.mesh) {
+    controls.mesh = changeMat(geomFunction(), controls.mesh.material);
+  } else {
+    controls.mesh = changeMat(geomFunction());
+  }
+
+  controls.mesh.castShadow = controls.castShadow;
+  scene.add(controls.mesh)
+  controls.currentMaterialFolder = addBasicMaterialSettings(gui, controls, controls.mesh.material);
+  controls.specificMaterialFolder = addSpecificMaterialSettings(gui, controls, controls.mesh.material);
+}
+
+/**
+ * Remove a folder from the dat.gui
+ * 
+ * @param {*} gui 
+ * @param {*} folder 
+ */
+function guiRemoveFolder(gui, folder) {
+  const title = folder?._title;
+  if (title && gui.folders.length > 0) {
+    gui.folders.forEach(f => {
+      if (f._title === title) {
+        debugger;
+        f.domElement.parentNode.removeChild(f.domElement);
+      }
+    })
+  }
 }

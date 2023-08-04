@@ -7,7 +7,7 @@ import {
   container,
   addAxesHelper,
 } from "../../utils";
-import { gosper } from './util'; 
+import { gosper } from './util';
 
 let trackBallControls, camera, renderer;
 
@@ -17,7 +17,7 @@ camera = initPerspectiveCamera();
 
 renderer = initRenderer();
 
-// addAxesHelper(scene);
+addAxesHelper(scene);
 
 // add subtle ambient lighting
 const ambientLight = new THREE.AmbientLight(0x0c0c0c);
@@ -33,19 +33,24 @@ const points = gosper(4, 60);
 const colors = [];
 const vertices = [];
 points.forEach((e) => {
+  // vertices.push(e.x, e.z, e.y);
   vertices.push(new THREE.Vector3(e.x, e.z, e.y));
-  colors.push(e.x / 100 + 0.5, (e.y * 20) / 300, 0.8); 
+  colors.push(e.x / 100 + 0.5, (e.y * 20) / 300, 0.8);
 });
 
 const lines = new THREE.BufferGeometry();
 lines.setFromPoints(vertices);
 lines.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3)); // has no effect
-const material = new THREE.LineBasicMaterial({
-  opacity: 1.0,
-  linewidth: 1
+// use LineBasicMaterial as well
+const material = new THREE.LineDashedMaterial({
+  vertexColors: true,
+  dashSize: 2,
+  gapSize: 2,
 });
 
 const line = new THREE.Line(lines, material);
+// For each vertex in the geometry, the method calculates the cumulative length from the current point to the very beginning of the line. 
+line.computeLineDistances();
 line.position.set(25, -30, -60);
 scene.add(line);
 
