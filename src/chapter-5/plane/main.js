@@ -26,10 +26,18 @@ class Controls {
         this.heightSegments = this.planeGeometry.parameters.heightSegments;
     }
 
-    redraw() {
-        redrawGeometryAndUpdateUI(gui, scene, controls, function () {
-            return new THREE.PlaneGeometry(controls.width, controls.height, Math.round(controls.widthSegments), Math.round(controls.heightSegments));
-        });
+    redraw = () => {
+        redrawGeometryAndUpdateUI(
+            gui,
+            scene,
+            controls,
+            new THREE.PlaneGeometry(
+                this.width,
+                this.height,
+                Math.round(this.widthSegments),
+                Math.round(this.heightSegments)
+            )
+        );
     };
 }
 

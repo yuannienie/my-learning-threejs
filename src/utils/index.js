@@ -428,15 +428,15 @@ export const applyMeshStandardMaterial = (geometry, material) => {
   return new THREE.Mesh(geometry, material)
 }
 
-export function redrawGeometryAndUpdateUI(gui, scene, controls, geomFunction) {
+export function redrawGeometryAndUpdateUI(gui, scene, controls, geometry) {
   guiRemoveFolder(gui, controls.specificMaterialFolder);
   guiRemoveFolder(gui, controls.currentMaterialFolder);
   if (controls.mesh) scene.remove(controls.mesh)
-  var changeMat = eval("(" + controls.appliedMaterial + ")")
+  const appliedMaterialFn = controls.appliedMaterial;
   if (controls.mesh) {
-    controls.mesh = changeMat(geomFunction(), controls.mesh.material);
+    controls.mesh = appliedMaterialFn(geometry(), controls.mesh.material);
   } else {
-    controls.mesh = changeMat(geomFunction());
+    controls.mesh = appliedMaterialFn(geometry());
   }
 
   controls.mesh.castShadow = controls.castShadow;
@@ -453,12 +453,13 @@ export function redrawGeometryAndUpdateUI(gui, scene, controls, geomFunction) {
  */
 function guiRemoveFolder(gui, folder) {
   const title = folder?._title;
-  if (title && gui.folders.length > 0) {
-    gui.folders.forEach(f => {
-      if (f._title === title) {
-        debugger;
+  if (title) {
+    for (let i = 0; i < gui.folders.length; i++) {
+      const f = gui.folders[i];
+      if (f?._title === title) {
         f.domElement.parentNode.removeChild(f.domElement);
+        delete gui.folders[i];
       }
-    })
+    }
   }
 }
