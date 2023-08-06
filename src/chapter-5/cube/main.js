@@ -20,11 +20,14 @@ class Controls {
         this.castShadow = true;
         this.groundPlaneVisible = true;
 
-        this.planeGeometry = new THREE.PlaneGeometry(20, 20, 4, 4);
-        this.width = this.planeGeometry.parameters.width;
-        this.height = this.planeGeometry.parameters.height;
-        this.widthSegments = this.planeGeometry.parameters.widthSegments;
-        this.heightSegments = this.planeGeometry.parameters.heightSegments;
+        const baseGeom = new THREE.BoxGeometry(4, 10, 10, 4, 4, 4);
+        this.width = baseGeom.parameters.width;
+        this.height = baseGeom.parameters.height;
+        this.depth = baseGeom.parameters.depth;
+
+        this.widthSegments = baseGeom.parameters.widthSegments;
+        this.heightSegments = baseGeom.parameters.heightSegments;
+        this.depthSegments = baseGeom.parameters.depthSegments;
     }
 
     redraw = () => {
@@ -32,11 +35,11 @@ class Controls {
             gui,
             scene,
             controls,
-            new THREE.PlaneGeometry(
+            () => new THREE.BoxGeometry(
                 this.width,
                 this.height,
-                Math.round(this.widthSegments),
-                Math.round(this.heightSegments)
+                this.depth,
+                Math.round(this.widthSegments), Math.round(this.heightSegments), Math.round(this.depthSegments)
             )
         );
     };
@@ -68,13 +71,16 @@ const gui = new GUI();
 const controls = new Controls();
 gui.add(controls, 'width', 0, 40).onChange(controls.redraw);
 gui.add(controls, 'height', 0, 40).onChange(controls.redraw);
+gui.add(controls, 'depth', 0, 40).onChange(controls.redraw);
 gui.add(controls, 'widthSegments', 0, 10).onChange(controls.redraw);
 gui.add(controls, 'heightSegments', 0, 10).onChange(controls.redraw);
+gui.add(controls, 'depthSegments', 0, 10).onChange(controls.redraw);
 // add a material section, so we can switch between materials
 gui.add(controls, 'appliedMaterial', {
     meshNormal: applyMeshNormalMaterial,
     meshStandard: applyMeshStandardMaterial
 }).onChange(controls.redraw)
+
 gui.add(controls, 'castShadow').onChange(function (e) { controls.mesh.castShadow = e })
 gui.add(controls, 'groundPlaneVisible').onChange(function (e) { groundPlane.material.visible = e })
 

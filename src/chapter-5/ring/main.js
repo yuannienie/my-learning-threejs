@@ -20,11 +20,12 @@ class Controls {
         this.castShadow = true;
         this.groundPlaneVisible = true;
 
-        this.planeGeometry = new THREE.PlaneGeometry(20, 20, 4, 4);
-        this.width = this.planeGeometry.parameters.width;
-        this.height = this.planeGeometry.parameters.height;
-        this.widthSegments = this.planeGeometry.parameters.widthSegments;
-        this.heightSegments = this.planeGeometry.parameters.heightSegments;
+        this.innerRadius = 3;
+        this.outerRadius = 10;
+        this.thetaSegments = 8;
+        this.phiSegments = 8;
+        this.thetaStart = 0;
+        this.thetaLength = Math.PI * 2;
     }
 
     redraw = () => {
@@ -32,11 +33,13 @@ class Controls {
             gui,
             scene,
             controls,
-            new THREE.PlaneGeometry(
-                this.width,
-                this.height,
-                Math.round(this.widthSegments),
-                Math.round(this.heightSegments)
+            () => new THREE.RingGeometry(
+                this.innerRadius,
+                this.outerRadius,
+                this.thetaSegments,
+                this.phiSegments,
+                this.thetaStart,
+                this.thetaLength
             )
         );
     };
@@ -66,15 +69,18 @@ trackBallControls = new OrbitControls(camera, renderer.domElement);
 
 const gui = new GUI();
 const controls = new Controls();
-gui.add(controls, 'width', 0, 40).onChange(controls.redraw);
-gui.add(controls, 'height', 0, 40).onChange(controls.redraw);
-gui.add(controls, 'widthSegments', 0, 10).onChange(controls.redraw);
-gui.add(controls, 'heightSegments', 0, 10).onChange(controls.redraw);
+gui.add(controls, 'innerRadius', 0, 40).onChange(controls.redraw);
+gui.add(controls, 'outerRadius', 0, 100).onChange(controls.redraw);
+gui.add(controls, 'thetaSegments', 1, 40).step(1).onChange(controls.redraw);
+gui.add(controls, 'phiSegments', 1, 20).step(1).onChange(controls.redraw);
+gui.add(controls, 'thetaStart', 0, Math.PI * 2).onChange(controls.redraw);
+gui.add(controls, 'thetaLength', 0, Math.PI * 2).onChange(controls.redraw);
 // add a material section, so we can switch between materials
 gui.add(controls, 'appliedMaterial', {
     meshNormal: applyMeshNormalMaterial,
     meshStandard: applyMeshStandardMaterial
 }).onChange(controls.redraw)
+
 gui.add(controls, 'castShadow').onChange(function (e) { controls.mesh.castShadow = e })
 gui.add(controls, 'groundPlaneVisible').onChange(function (e) { groundPlane.material.visible = e })
 

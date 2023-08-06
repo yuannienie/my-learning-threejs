@@ -19,7 +19,7 @@ class Controls {
         this.appliedMaterial = applyMeshNormalMaterial;
         this.castShadow = true;
         this.groundPlaneVisible = true;
-        this.groundPlaneVisible = true;
+
         this.radius = 4;
         this.thetaStart = 0.3 * Math.PI * 2;
         this.thetaLength = 0.3 * Math.PI * 2;
