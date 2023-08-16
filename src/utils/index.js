@@ -128,16 +128,12 @@ export function initRenderer(properties) {
 }
 
 export function initPerspectiveCamera(
-  initialPosition,
+  initialPosition = new THREE.Vector3(-30, 40, 30),
   lookAtPosition = new THREE.Vector3(0, 0, 0),
   { fov = 45, near = 0.1, far = 1000 } = {}
 ) {
-  const position =
-    initialPosition !== undefined
-      ? initialPosition
-      : new THREE.Vector3(-30, 40, 30);
   const camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
-  camera.position.copy(position);
+  camera.position.copy(initialPosition);
   camera.lookAt(lookAtPosition);
 
   return camera;
