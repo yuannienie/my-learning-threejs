@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { initRenderer, initPerspectiveCamera, container, addAxesHelper } from '../../utils';
+import { initRenderer, initPerspectiveCamera, container, addAxesHelper, createGhostTexture } from '../../utils';
 
 class Controls {
   constructor() {
@@ -84,6 +84,7 @@ function createParticles(size, transparent, opacity, vertexColors, sizeAttenuati
     sizeAttenuation,
     color: new THREE.Color(colorValue),
     vertexColors,
+    map: createGhostTexture(),
   });
 
   const range = 500;
