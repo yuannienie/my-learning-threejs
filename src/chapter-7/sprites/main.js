@@ -67,7 +67,7 @@ function createPoints() {
       colors.push(Math.random(), Math.random(), Math.random());
     }
   }
-  
+
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   cloud = new THREE.Points(geometry, material);
@@ -81,7 +81,7 @@ function createParticles(size, transparent, opacity, vertexColors, sizeAttenuati
     transparent,
     opacity,
     // Specify whether points' size is attenuated by the camera depth. (Perspective camera only.) Default is true.
-    sizeAttenuation, 
+    sizeAttenuation,
     color: new THREE.Color(colorValue),
     vertexColors,
   });
@@ -89,12 +89,14 @@ function createParticles(size, transparent, opacity, vertexColors, sizeAttenuati
   const range = 500;
   const vertices = [];
   const colors = [];
+
+  // colors array expect the RGB Array, here use 'setHex' to get Color
   const getRandomLColorHex = () => {
     const asHSL = {};
-    const color = new THREE.Color(vertexColorValue);
+    const color = new THREE.Color().setHex(vertexColorValue);
     color.getHSL(asHSL);
     color.setHSL(asHSL.h, asHSL.s, asHSL.l * Math.random());
-    return color.getHex();
+    return [color.r, color.g, color.b];
   }
   for (let i = 0; i < 15000; i++) {
     vertices.push(
@@ -102,11 +104,11 @@ function createParticles(size, transparent, opacity, vertexColors, sizeAttenuati
       Math.random() * range - range / 2,
       Math.random() * range - range / 2
     );
-    colors.push(getRandomLColorHex()); // FIXME: why always red
+    colors.push(...getRandomLColorHex());
   }
 
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 1));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   cloud = new THREE.Points(geometry, material);
   cloud.name = "particles";
   scene.add(cloud);
@@ -139,7 +141,7 @@ function animate() {
     cloud.rotation.z = step;
   }
   requestAnimationFrame(animate);
-  renderer.render( scene, camera );
+  renderer.render(scene, camera);
 }
 
 // createSprites();
