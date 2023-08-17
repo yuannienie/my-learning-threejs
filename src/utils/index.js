@@ -474,6 +474,9 @@ export function createGhostTexture() {
   ctx.beginPath();
   ctx.moveTo(83, 116);
   ctx.lineTo(83, 102);
+  // The CanvasRenderingContext2D.bezierCurveTo() method of the Canvas 2D API adds a cubic Bézier curve to the current sub-path. 
+  // It requires three points: the first two are control points and the third one is the end point. 
+  // bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
   ctx.bezierCurveTo(83, 94, 89, 88, 97, 88);
   ctx.bezierCurveTo(105, 88, 111, 94, 111, 102);
   ctx.lineTo(111, 116);
