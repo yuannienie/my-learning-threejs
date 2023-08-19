@@ -8,6 +8,7 @@ export const container = document.getElementById("webgl-container");
 
 export function addAxesHelper(scene, helperSize = 50) {
   const axesHelper = new THREE.AxesHelper(helperSize);
+  axesHelper.setColors(0xff0000, 0x00ff00, 0x0000ff);
   scene.add(axesHelper);
 }
 
@@ -111,10 +112,8 @@ export function addHouseAndTree(scene) {
   createTree(scene);
 }
 
-export function initRenderer(properties) {
-  const props =
-    typeof properties !== "undefined" && properties ? properties : {};
-  const renderer = new THREE.WebGLRenderer(props);
+export function initRenderer(...props) {
+  const renderer = new THREE.WebGLRenderer(...props);
   renderer.shadowMap.enabled = true;
   renderer.shadowMapSoft = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;

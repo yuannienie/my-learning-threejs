@@ -3,9 +3,9 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { initRenderer, initPerspectiveCamera, container, addAxesHelper } from "../../utils";
-import grassLightBig from "../../../assets/textures/ground/grasslight-big.jpg";
-import lensflare0 from "../../../assets/textures/flares/lensflare0.png";
-import lensflare3 from "../../../assets/textures/flares/lensflare3.png";
+import grassLightBig from "@assets/textures/ground/grasslight-big.jpg";
+import lensflare0 from "@assets/textures/flares/lensflare0.png";
+import lensflare3 from "@assets/textures/flares/lensflare3.png";
 import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
 
 class Controls {
