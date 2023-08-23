@@ -515,3 +515,47 @@ export function createGhostTexture() {
   texture.needsUpdate = true;
   return texture;
 };
+
+// optionalTarget will be finnaly returned, so it is required
+export const plane = (u, v, optionalTarget) => {
+  const result = optionalTarget || new THREE.Vector3();
+  const x = u * 40;
+  const y = 0;
+  const z = v * 50;
+
+  return result.set(x, y, z);
+}
+
+export const klein = (u, v, optionalTarget) => {
+
+  const result = optionalTarget || new THREE.Vector3();
+
+  u *= Math.PI;
+  v *= 2 * Math.PI;
+
+  u = u * 2;
+  var x, y, z;
+  if (u < Math.PI) {
+    x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(u) * Math.cos(v);
+    z = -8 * Math.sin(u) - 2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v);
+  } else {
+    x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(v + Math.PI);
+    z = -8 * Math.sin(u);
+  }
+
+  y = -2 * (1 - Math.cos(u) / 2) * Math.sin(v);
+
+  return result.set(x, y, z);
+};
+
+export const radialWave = (u, v, optionalTarget) => {
+
+  var result = optionalTarget || new THREE.Vector3();
+  var r = 50;
+
+  var x = Math.sin(u) * r;
+  var z = Math.sin(v / 2) * 2 * r;
+  var y = (Math.sin(u * 4 * Math.PI) + Math.cos(v * 2 * Math.PI)) * 2.8;
+
+  return result.set(x, y, z);
+};

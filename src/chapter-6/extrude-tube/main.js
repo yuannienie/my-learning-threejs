@@ -78,7 +78,7 @@ scene.add(groundPlane);
 function generatePoints(points, segments, radius, radiusSegments, closed) {
     if (spGroup) scene.remove(spGroup)
     spGroup = new THREE.Group();
-    var material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshBasicMaterial({
         color: 0xff0000,
         transparent: false
     });
@@ -92,9 +92,8 @@ function generatePoints(points, segments, radius, radiusSegments, closed) {
     scene.add(spGroup);
     // Create a smooth 3d spline curve from a series of points using the Catmull-Rom algorithm.
     const path = new THREE.CatmullRomCurve3(points);
-    const tubeGeometry = new THREE.TubeGeometry(path, segments, radius, radiusSegments, closed);
-    // tubeGeometry.applyMatrix4(new THREE.Matrix4().makeScale(0.4, 0.4, 0.4));
-    return tubeGeometry;
+    // define the path and create the tube along the path
+    return new THREE.TubeGeometry(path, segments, radius, radiusSegments, closed);
 }
 
 const gui = new GUI();
@@ -119,7 +118,7 @@ controls.newPoints();
 let step = 0;
 function animate() {
     stats.update();
-    // step += 0.005;
+    step += 0.005;
     controls.mesh.rotation.set(step, step, step);
     if (spGroup) {
         spGroup.rotation.set(step, step, step);
