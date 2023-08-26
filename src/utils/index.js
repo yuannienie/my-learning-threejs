@@ -3,6 +3,8 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 // add `?url` as a resource url to import obj file
 import gopherObj from '@assets/models/gopher/gopher.obj?url'
 import floorWood from '@assets/textures/general/floor-wood.jpg'
+import Stats from "three/addons/libs/stats.module.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 export const container = document.getElementById("webgl-container");
 
@@ -559,3 +561,77 @@ export const radialWave = (u, v, optionalTarget) => {
 
   return result.set(x, y, z);
 };
+
+/**
+ * Simple base class, which setups a simple scene which is used to 
+ * demonstrate the different loaders. This create a scene, three
+ * lights, and slowly rotates the model, around the z-axis
+ */
+export class BaseLoaderScene {
+  constructor(camera, updateMesh, shouldAddLights = true, shouldRotate = true) {
+    this.providedCamera = camera;
+    this.withLights = shouldAddLights;
+    this.shouldRotate = shouldRotate;
+    this.updateMesh = updateMesh;
+    // setup some default elements
+    this.scene = new THREE.Scene();
+    this.stats = new Stats();
+    this.clock = new THREE.Clock();
+    // initialize basic renderer
+    this.renderer = initRenderer({ antialias: true });
+    this.trackballControls = new OrbitControls(this.camera, this.renderer.domElement);
+  }
+
+  /**
+   * Start the render loop of the provided object
+   * 
+   * @param {Three.Object3D} mesh render this mesh or object
+   * @param {*} camera render using the provided camera settings
+   */
+  render = (mesh, camera) => {
+    // add the lights
+    if (this.withLights) this._addLights();
+    this.scene.add(mesh);
+    this.camera = camera;
+    this.mesh = mesh;
+    this._render();
+  }
+
+  /**
+   * Interal function, called continously to render the scene
+   */
+  _render = () => {
+    this.stats.update();
+    requestAnimationFrame(this._render);
+    this.trackballControls.update(this.clock.getDelta());
+    if (updateMesh) this.updateMesh(this.mesh)
+    if (shouldRotate) this.mesh.rotation.z += 0.01
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  /**
+   * Internal function, which adds a number of lights to the scene.
+   */
+  _addLights = () => {
+    const keyLight = new THREE.SpotLight(0xffffff);
+    keyLight.position.set(00, 80, 80);
+    keyLight.intensity = 2;
+    keyLight.lookAt(new THREE.Vector3(0, 15, 0));
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.height = 4096;
+    keyLight.shadow.mapSize.width = 4096;
+    this.scene.add(keyLight);
+
+    const backlight1 = new THREE.SpotLight(0xaaaaaa);
+    backlight1.position.set(150, 40, -20);
+    backlight1.intensity = 0.5;
+    backlight1.lookAt(new THREE.Vector3(0, 15, 0));
+    this.scene.add(backlight1);
+
+    const backlight2 = new THREE.SpotLight(0xaaaaaa);
+    backlight2.position.set(-150, 40, -20);
+    backlight2.intensity = 0.5;
+    backlight2.lookAt(new THREE.Vector3(0, 15, 0));
+    this.scene.add(backlight2);
+  }
+}
