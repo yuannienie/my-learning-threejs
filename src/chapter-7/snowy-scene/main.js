@@ -33,7 +33,6 @@ class Controls {
   };
 }
 
-// TODO: how to change the initial height of the particle
 function createPointCloud(name, texture, size, transparent, opacity, sizeAttenuation, _color) {
   const geometry = new THREE.BufferGeometry();
   const asHSL = {};
@@ -67,9 +66,9 @@ function createPointCloud(name, texture, size, transparent, opacity, sizeAttenua
     const velocityY = 0.1 + Math.random() / 5;
     const velocityZ = (Math.random() - 0.5) / 3;
 
-    particle.x += velocityX;
-    particle.y -= velocityY;
-    particle.z += velocityZ;
+    // particle.x += velocityX;
+    // particle.y -= velocityY;
+    // particle.z += velocityZ;
 
     vertices.push(particle.x, particle.y, particle.z);
     velocities.push(velocityX, velocityY, velocityZ);
@@ -104,7 +103,7 @@ const camera = initPerspectiveCamera(initialPosition, lookAtPosition);
 
 const scene = new THREE.Scene();
 
-// addAxesHelper(scene);
+addAxesHelper(scene);
 
 const stats = new Stats();
 container.appendChild(stats.domElement);
@@ -142,6 +141,7 @@ function animate() {
         if (vertices[i + 2] <= -20 || vertices[i + 2] >= 20) velocities[i + 2] *= -1;
       }
 
+      // Flag to indicate that this attribute has changed and should be re-sent to the GPU. Set this to true when you modify the value of the array.
       child.geometry.attributes.position.needsUpdate = true;
     }
   })
