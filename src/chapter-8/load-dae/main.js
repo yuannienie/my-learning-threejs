@@ -9,8 +9,7 @@ async function init() {
     camera.lookAt(new THREE.Vector3(0, 45, 0));
 
     const loaderScene = new BaseLoaderScene(camera);
-    loaderScene.render(new THREE.AxesHelper(), camera);
-    // a loader to load or parse .dae files
+    // Collada model(.dae) defines geometry, material and light
     const loader = new ColladaLoader();
     loader.load(
         building,

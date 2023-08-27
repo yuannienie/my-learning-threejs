@@ -16,12 +16,14 @@ async function init() {
     // so the house json file cannot be right parsed
     // const loader = new THREE.ObjectLoader();
 
+    // MTL file defines the using material
     const mtfLoader = new MTLLoader();
     mtfLoader.load(
         // resource URL
         butterflyM,
         (material) => {
             material.preload();
+            // OBJ file defines the using geometry
             const objLoader = new OBJLoader();
             objLoader.setMaterials(material);
             objLoader.load(
