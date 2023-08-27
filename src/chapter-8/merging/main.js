@@ -29,11 +29,13 @@ class Controls {
                 const cubeMesh = this.addCube();
                 // It recalculates the matrix to reflect any changes made to the object's transformation.
                 cubeMesh.updateMatrix();
-                geometryArray.push(cubeMesh.geometry);
+                // FIXME: why just show a single object?
+                // SOLUTION: need to update the matrix and apply to the geometry
+                const newGeometry = cubeMesh.geometry.applyMatrix4(cubeMesh.matrix);
+                geometryArray.push(newGeometry);
             }
             // improve performance by combining multiple geometries into a single geometry.
             const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometryArray, true);
-            // FIXME: why just show a single object?
             scene.add(new THREE.Mesh(mergedGeometry, cubeMaterial));
         } else {
             for (let i = 0; i < this.numberOfObjects; i++) {

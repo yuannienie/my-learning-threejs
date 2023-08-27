@@ -569,7 +569,7 @@ export const radialWave = (u, v, optionalTarget) => {
  */
 export class BaseLoaderScene {
   constructor(camera, updateMesh, shouldAddLights = true, shouldRotate = true) {
-    this.providedCamera = camera;
+    this.camera = camera;
     this.withLights = shouldAddLights;
     this.shouldRotate = shouldRotate;
     this.updateMesh = updateMesh;
@@ -604,8 +604,8 @@ export class BaseLoaderScene {
     this.stats.update();
     requestAnimationFrame(this._render);
     this.trackballControls.update(this.clock.getDelta());
-    if (updateMesh) this.updateMesh(this.mesh)
-    if (shouldRotate) this.mesh.rotation.z += 0.01
+    if (this.updateMesh) this.updateMesh(this.mesh)
+    if (this.shouldRotate) this.mesh.rotation.z += 0.01
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -614,7 +614,7 @@ export class BaseLoaderScene {
    */
   _addLights = () => {
     const keyLight = new THREE.SpotLight(0xffffff);
-    keyLight.position.set(00, 80, 80);
+    keyLight.position.set(80, 80, 80);
     keyLight.intensity = 2;
     keyLight.lookAt(new THREE.Vector3(0, 15, 0));
     keyLight.castShadow = true;
