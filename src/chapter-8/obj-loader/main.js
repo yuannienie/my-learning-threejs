@@ -65,6 +65,15 @@ async function init() {
         },
     );
 
+    window.addEventListener(
+        "resize",
+        () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            loaderScene.renderer.setSize(window.innerWidth, window.innerHeight);
+        },
+        false
+    );
 }
 
 init();

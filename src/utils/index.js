@@ -588,7 +588,7 @@ export class BaseLoaderScene {
    * @param {Three.Object3D} mesh render this mesh or object
    * @param {*} camera render using the provided camera settings
    */
-  render = (mesh, camera) => {
+  render = (mesh, camera = this.camera) => {
     // add the lights
     if (this.withLights) this._addLights();
     this.scene.add(mesh);
