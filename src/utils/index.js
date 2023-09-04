@@ -5,6 +5,7 @@ import gopherObj from '@assets/models/gopher/gopher.obj?url'
 import floorWood from '@assets/textures/general/floor-wood.jpg'
 import Stats from "three/addons/libs/stats.module.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { TrackballControls } from "three/addons/controls/TrackballControls.js";
 
 export const container = document.getElementById("webgl-container");
 
@@ -635,3 +636,17 @@ export class BaseLoaderScene {
     this.scene.add(backlight2);
   }
 }
+
+export const initTrackballControls = (camera, renderer) => {
+  const trackballControls = new TrackballControls(camera, renderer.domElement);
+  trackballControls.rotateSpeed = 1.0;
+  trackballControls.zoomSpeed = 1.2;
+  trackballControls.panSpeed = 0.8;
+  trackballControls.noZoom = false;
+  trackballControls.noPan = false;
+  trackballControls.staticMoving = true;
+  trackballControls.dynamicDampingFactor = 0.3;
+  trackballControls.keys = [65, 83, 68];
+
+  return trackballControls;
+};
