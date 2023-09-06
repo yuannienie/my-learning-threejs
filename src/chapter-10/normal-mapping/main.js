@@ -3,12 +3,17 @@ import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { initRenderer, initPerspectiveCamera, container, addAxesHelper, initDefaultLight, addLargeGroundPlane, initTrackballControls } from '../../utils';
 import { addGeometry } from '../util';
-import stone from '@assets/textures/stone/stone.jpg?url';
-import stoneBump from '@assets/textures/stone/stone-bump.jpg?url';
+import plaster from '@assets/textures/general/plaster.jpg?url';
+import plasterNormal from '@assets/textures/general/plaster-normal.jpg?url';
 
 class Controls {
-    constructor() { }
+    constructor() {
+        this.normalScaleX = 1;
+        this.normalScaleY = 1;
+    }
 }
+
+let sphereLightMesh, pointLight;
 
 const renderer = initRenderer();
 
@@ -18,6 +23,13 @@ const camera = initPerspectiveCamera(lookAt);
 const scene = new THREE.Scene();
 
 initDefaultLight(scene);
+pointLight = new THREE.PointLight(0xff5808);
+scene.add(pointLight);
+// create a sphere light to show the normal-mapping effects
+const sphereLight = new THREE.SphereGeometry(0.2);
+const sphereLightMaterial = new THREE.MeshStandardMaterial({ color: 0xff5808 });
+sphereLightMesh = new THREE.Mesh(sphereLight, sphereLightMaterial);
+scene.add(sphereLightMesh);
 
 const groundPlane = addLargeGroundPlane(scene, true);
 groundPlane.position.y = -10;
@@ -32,24 +44,31 @@ container.appendChild(stats.domElement);
 
 const gui = new GUI();
 const controls = new Controls();
+gui.add(controls, "normalScaleX", -3, 3, 0.001).onChange(function (e) {
+    cubeMaterialWithNormalMap.normalScale.set(controls.normalScaleX, controls.normalScaleY);
+});
+gui.add(controls, "normalScaleY", -3, 3, 0.001).onChange(function (e) {
+    cubeMaterialWithNormalMap.normalScale.set(controls.normalScaleX, controls.normalScaleY);
+});
 
 function createObject() {
     const textureLoader = new THREE.TextureLoader();
 
     const cube = new THREE.BoxGeometry(16, 16, 16);
     const cubeMaterial = new THREE.MeshStandardMaterial({
-        map: textureLoader.load(stone),
+        map: textureLoader.load(plaster),
         metalness: 0.2,
         roughness: 0.07,
     })
-    const cubeMaterialWithBumpMap = cubeMaterial.clone();
-    // The texture to create a bump map. The black and white values map to the perceived depth in relation to the lights. 
-    // Bump doesn't actually affect the geometry of the object, only the lighting. If a normal map is defined this will be ignored.
-    cubeMaterialWithBumpMap.bumpMap = textureLoader.load(stoneBump);
+    const cubeMaterialWithNormalMap = cubeMaterial.clone();
+    // The texture to create a normal map. 
+    // The RGB values affect the surface normal for each pixel fragment and change the way the color is lit. 
+    // Normal maps do not change the actual shape of the surface, only the lighting. 
+    cubeMaterialWithNormalMap.normalMap = textureLoader.load(plasterNormal);
 
     const cubeNoBump = addGeometry({
         geom: cube,
-        name: 'cubeNoBump',
+        name: 'cube-1',
         gui,
         controls,
         material: cubeMaterial
@@ -60,10 +79,10 @@ function createObject() {
 
     const cubeWithBump = addGeometry({
         geom: cube,
-        name: 'cubeWithBump',
+        name: 'cube-2',
         gui,
         controls,
-        material: cubeMaterialWithBumpMap
+        material: cubeMaterialWithNormalMap
     })
     cubeWithBump.position.x = 12;
     cubeWithBump.rotation.y = -(1 / 3) * Math.PI;
@@ -71,12 +90,33 @@ function createObject() {
 }
 
 createObject();
+
+let phase = 0;
+let invert = 1;
 const clock = new THREE.Clock();
 function animate() {
     stats.update();
     const delta = clock.getDelta();
     // Get the seconds passed since the time .oldTime was set and sets .oldTime to the current time.
     trackControls.update(delta);
+
+    if (phase > 2 * Math.PI) {
+        invert *= -1;
+        phase -= 2 * Math.PI;
+    } else {
+        phase += 0.02;
+    }
+
+    sphereLightMesh.position.z = +(21 * Math.sin(phase));
+    sphereLightMesh.position.x = -14 + 14 * Math.cos(phase);
+    sphereLightMesh.position.y = 5;
+
+    if (invert === -1) {
+        sphereLightMesh.position.x = -sphereLightMesh.position.x;
+    }
+
+    pointLight.position.copy(sphereLightMesh.position);
+
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 }
