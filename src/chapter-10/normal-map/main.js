@@ -13,7 +13,7 @@ class Controls {
     }
 }
 
-let sphereLightMesh, pointLight;
+let sphereLightMesh, pointLight, cubeMaterialWithNormalMap;
 
 const renderer = initRenderer();
 
@@ -44,6 +44,7 @@ container.appendChild(stats.domElement);
 
 const gui = new GUI();
 const controls = new Controls();
+// How much the normal map affects the material.
 gui.add(controls, "normalScaleX", -3, 3, 0.001).onChange(function (e) {
     cubeMaterialWithNormalMap.normalScale.set(controls.normalScaleX, controls.normalScaleY);
 });
@@ -60,7 +61,7 @@ function createObject() {
         metalness: 0.2,
         roughness: 0.07,
     })
-    const cubeMaterialWithNormalMap = cubeMaterial.clone();
+    cubeMaterialWithNormalMap = cubeMaterial.clone();
     // The texture to create a normal map. 
     // The RGB values affect the surface normal for each pixel fragment and change the way the color is lit. 
     // Normal maps do not change the actual shape of the surface, only the lighting. 
