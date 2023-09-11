@@ -8,10 +8,27 @@
         body {
             margin: 0;
         }
+
+        .fs-container {
+            width: 256px;
+            height: 256px;
+            margin: auto;
+            bottom: 0px;
+            position: absolute;
+        }
+
+        #canvas-output {
+            width: 256px;
+            height: 256px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="fs-container">
+        <div id="canvas-output" style="float:left">
+        </div>
+    </div>
     <div id="webgl-container"></div>
     <!-- <script type="module" src="basic-texture/main.js"></script> -->
     <!-- <script type="module" src="bump-map/main.js"></script> -->
@@ -19,7 +36,8 @@
     <!-- <script type="module" src="displacement-map/main.js"></script> -->
     <!-- <script type="module" src="env-map/main.js"></script> -->
     <!-- <script type="module" src="alpha-map/main.js"></script> -->
-    <script type="module" src="specular-map/main.js"></script>
+    <!-- <script type="module" src="specular-map/main.js"></script> -->
+    <script type="module" src="canvas-bump-map/main.js"></script>
 </body>
 
 </html>
